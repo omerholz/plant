@@ -21,19 +21,19 @@ import ast
 import codecs
 import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def local_file(*f):
     path = os.path.join(os.path.dirname(__file__), *f)
     if os.path.isfile(path):
-        return codecs.open(path, 'r', encoding='utf-8').read().encode('utf-8')
+        return codecs.open(path, "r", encoding="utf-8").read().encode("utf-8")
 
     return path
 
 
 class VersionFinder(ast.NodeVisitor):
-    VARIABLE_NAME = 'version'
+    VARIABLE_NAME = "version"
 
     def __init__(self):
         self.version = None
@@ -48,18 +48,18 @@ class VersionFinder(ast.NodeVisitor):
 
 def read_version():
     finder = VersionFinder()
-    finder.visit(ast.parse(local_file('plant', 'version.py')))
+    finder.visit(ast.parse(local_file("plant", "version.py")))
     return finder.version
 
 
 # install_requires = list(filter(bool, map(bytes.strip, local_file('requirements.txt').splitlines())))
 
-
-setup(name='plant',
-      version=read_version(),
-      description=('Filesystem for humans'),
-      author='Gabriel Falcao',
-      author_email='gabriel@nacaolivre.org',
-      url='http://github.com/gabrielfalcao/plant',
-      packages=find_packages(exclude=['*tests*']),
+setup(
+    name="plant",
+    version=read_version(),
+    description=("Filesystem for humans"),
+    author="Gabriel Falcao",
+    author_email="gabriel@nacaolivre.org",
+    url="http://github.com/gabrielfalcao/plant",
+    packages=find_packages(exclude=["*tests*"]),
 )

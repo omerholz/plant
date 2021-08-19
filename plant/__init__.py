@@ -16,21 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-from plant.core import Node
-from plant.core import absolutify
-from plant.core import isdir
 from plant.core import isdir_base  # noqa
-from plant.core import isfile
 from plant.core import isfile_base  # noqa
+from plant.core import Node, absolutify, isdir, isfile
 from plant.version import version
 
 __version__ = version
 
 __all__ = [
-    'Node',
-    '__version__',
-    'absolutify',
-    'isdir',
-    'isfile',
-    'version',
+    "Node",
+    "__version__",
+    "absolutify",
+    "isdir",
+    "isfile",
+    "version",
 ]

@@ -16,28 +16,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 
-version = __version__ = '0.1.2'
-
 import io
 import os
 import re
-
 from fnmatch import fnmatch
-from os.path import (
-    abspath,
-    join,
-    dirname,
-    exists,
-    split,
-    expanduser,
-    basename,
-    relpath
-)
-from os.path import isfile as isfile_base
+from os.path import abspath, basename, dirname, exists, expanduser
 from os.path import isdir as isdir_base
+from os.path import isfile as isfile_base
+from os.path import join, relpath, split
+
+version = __version__ = "0.1.2"
 
 
-absolutify = lambda reference_path: lambda *path: join(abspath(dirname(reference_path)), *path)
+def absolutify(reference_path):
+    return lambda *path: join(abspath(dirname(reference_path)), *path)
+
+
 LOCAL_FILE = absolutify(__file__)
 
 
@@ -45,14 +39,14 @@ def isfile(path, exists):
     if exists:
         return isfile_base(path)
 
-    return '.' in split(path)[-1]
+    return "." in split(path)[-1]
 
 
 def isdir(path, exists):
     if exists:
         return isdir_base(path)
 
-    return '.' not in split(path)[-1]
+    return "." not in split(path)[-1]
 
 
 class DotDict(dict):
@@ -62,10 +56,21 @@ class DotDict(dict):
         except AttributeError:
             return self[attr]
 
-STAT_LABELS = ["mode", "ino", "dev", "nlink", "uid", "gid", "size", "atime", "mtime", "ctime"]
 
+STAT_LABELS = [
+    "mode",
+    "ino",
+    "dev",
+    "nlink",
+    "uid",
+    "gid",
+    "size",
+    "atime",
+    "mtime",
+    "ctime",
+]
 
-DOTDOTSLASH = '..{0}'.format(os.sep)
+DOTDOTSLASH = "..{0}".format(os.sep)
 
 
 class Node(object):
@@ -82,9 +87,10 @@ class Node(object):
     containing the results of calling `os.stat` (mode, ino, dev,
     nlink, uid, giu, size, atime, mtime, ctime)
     """
+
     def __init__(self, path):
-        self.path = abspath(expanduser(path)).rstrip('/')
-        self.path_regex = '^{0}'.format(re.escape(self.path))
+        self.path = abspath(expanduser(path)).rstrip("/")
+        self.path_regex = "^{0}".format(re.escape(self.path))
         try:
             stats = os.stat(self.path)
             self.exists = True
@@ -240,7 +246,7 @@ class Node(object):
         :param path: a path string
         :returns: :py:class:`bytes`
         """
-        return re.sub(self.path_regex, '', path).lstrip(os.sep)
+        return re.sub(self.path_regex, "", path).lstrip(os.sep)
 
     def trip_at(self, path, lazy=False):
         """Iterates recursively on a subpath of the current :py:class:`Node`
@@ -341,7 +347,6 @@ class Node(object):
         :param lazy: bool - if True returns an iterator, defaults to a flat :py:class:`list`
         :returns: an iterator or a list of :py:class:`Node`
         """
-
         def iterator():
             for filename in self.walk(lazy=lazy):
                 if re.search(pattern, filename, flags):
@@ -351,17 +356,17 @@ class Node(object):
 
     def __eq__(self, other):
         """Compares two :py:class:`Node` objects
-           Under the hood it compares the path and the metadata (permissions, ownership)
+        Under the hood it compares the path and the metadata (permissions, ownership)
 
-           >>> from plant import Node
-           >>>
-           >>> node1 = Node('/opt/media')
-           >>> node2 = Node('/opt/media')
-           >>> node3 = Node('/opt/media/mp3')
-           >>> node1 == node2
-           True
-           >>> node3 == node1
-           False
+        >>> from plant import Node
+        >>>
+        >>> node1 = Node('/opt/media')
+        >>> node2 = Node('/opt/media')
+        >>> node3 = Node('/opt/media/mp3')
+        >>> node1 == node2
+        True
+        >>> node3 == node1
+        False
         """
         return self.path == other.path and self.metadata == other.metadata
 
@@ -406,7 +411,7 @@ class Node(object):
         if isfile(final_path, exists(final_path)):
             new_path = dirname(new_path)
 
-        new_path = new_path.rstrip('/')
+        new_path = new_path.rstrip("/")
         new_path = "{0}/".format(new_path)
         return new_path.count(os.sep)
 
@@ -443,7 +448,7 @@ class Node(object):
 
         level = current.relative(path).count(os.sep)
 
-        way_back = os.sep.join(['..'] * level) or '.'
+        way_back = os.sep.join([".."] * level) or "."
         result = "{0}/{1}".format(way_back, remaining)
 
         return result
@@ -540,9 +545,9 @@ class Node(object):
         :returns: :py:class:`io.FileIO`
         """
         if path is None and self.is_file:
-            path = ''
+            path = ""
         elif path is None:
-            raise TypeError('open() missing 1 required argument: path')
+            raise TypeError("open() missing 1 required argument: path")
         return io.open(self.join(path), *args, **kw)
 
     def __repr__(self):
@@ -555,4 +560,4 @@ class Node(object):
            >>> repr(Node('/opt/documents'))
            'Node("/opt/documents")'
         """
-        return 'Node({0})'.format(repr(relpath(self.path)))
+        return "Node({0})".format(repr(relpath(self.path)))

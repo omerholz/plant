@@ -16,10 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os as _os
-from plant import Node as BaseNode
-from plant import isfile, isdir
 
 from mock import MagicMock, Mock
+
+from plant import Node as BaseNode
+from plant import isdir, isfile
 
 
 def MARKDOWN(m):
@@ -49,8 +50,8 @@ class FakeNode(BaseNode):
 
     def __init__(self, path):
         FakeNode.refcount += 1
-        self.path = "/{0}".format(path.strip('/'))
-        self.path_regex = '^{0}'.format(self.path)
+        self.path = "/{0}".format(path.strip("/"))
+        self.path_regex = "^{0}".format(self.path)
         self.is_file = isfile(path, False)
         self.is_dir = isdir(path, False)
         self.exists = False
